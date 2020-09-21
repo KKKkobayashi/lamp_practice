@@ -1,11 +1,15 @@
 <?php
 
+#docker-compose.ymlより同期したドキュメントルートからmodelディレクトリを取得
 define('MODEL_PATH', $_SERVER['DOCUMENT_ROOT'] . '/../model/');
+#上記と同様にしてviewディレクトリを取得
 define('VIEW_PATH', $_SERVER['DOCUMENT_ROOT'] . '/../view/');
 
-
+#html配下のimagesディレクトリまでのパス
 define('IMAGE_PATH', '/assets/images/');
+#html配下のcssディレクトリまでのパス
 define('STYLESHEET_PATH', '/assets/css/');
+#
 define('IMAGE_DIR', $_SERVER['DOCUMENT_ROOT'] . '/assets/images/' );
 
 define('DB_HOST', 'mysql');

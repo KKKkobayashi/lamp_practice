@@ -18,7 +18,6 @@ function get_item($db, $item_id){
     WHERE
       item_id = {$item_id}
   ";
-
   return fetch_query($db, $sql);
 }
 
