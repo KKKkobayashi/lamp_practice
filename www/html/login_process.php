@@ -11,18 +11,23 @@ if(is_logined() === true){
 
 $name = get_post('name');
 $password = get_post('password');
+$token = get_post('token');
 
 $db = get_db_connect();
 
+if(is_valid_csrf_token($token) === TRUE) {
+  $user = login_as($db, $name, $password);
+  if( $user === false){
+    set_error('ログインに失敗しました。');
+    redirect_to(LOGIN_URL);
+  }
 
-$user = login_as($db, $name, $password);
-if( $user === false){
-  set_error('ログインに失敗しました。');
+  set_message('ログインしました。');
+  if ($user['type'] === USER_TYPE_ADMIN){
+    redirect_to(ADMIN_URL);
+  }
+  redirect_to(HOME_URL);
+}
+else {
   redirect_to(LOGIN_URL);
 }
-
-set_message('ログインしました。');
-if ($user['type'] === USER_TYPE_ADMIN){
-  redirect_to(ADMIN_URL);
-}
-redirect_to(HOME_URL);

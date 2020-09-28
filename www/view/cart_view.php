@@ -1,3 +1,7 @@
+<?php 
+header('X-FRAME-OPTIONS: DENY');
+$token = get_csrf_token();
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -44,6 +48,7 @@
               <form method="post" action="cart_delete_cart.php">
                 <input type="submit" value="削除" class="btn btn-danger delete">
                 <input type="hidden" name="cart_id" value="<?php print(h($cart['cart_id'])); ?>">
+                <input type='hidden' name='token' value='<?php print $token;?>'>
               </form>
 
             </td>
@@ -54,6 +59,7 @@
       <p class="text-right">合計金額: <?php print number_format(h($total_price)); ?>円</p>
       <form method="post" action="finish.php">
         <input class="btn btn-block btn-primary" type="submit" value="購入する">
+        <input type='hidden' name='token' value='<?php print $token;?>'>
       </form>
     <?php } else { ?>
       <p>カートに商品はありません。</p>
