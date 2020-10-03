@@ -1,6 +1,7 @@
 <?php 
 require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
+require_once MODEL_PATH . 'history.php';
 
 function get_user_carts($db, $user_id){
   $sql = "
@@ -102,9 +103,13 @@ function delete_cart($db, $cart_id){
 }
 
 function purchase_carts($db, $carts){
+  //商品確認
   if(validate_cart_purchase($carts) === false){
     return false;
   }
+  //トランザクション開始
+  $db->beginTransaction();
+  //在庫変更
   foreach($carts as $cart){
     if(update_item_stock(
         $db, 
@@ -112,10 +117,24 @@ function purchase_carts($db, $carts){
         $cart['stock'] - $cart['amount']
       ) === false){
       set_error($cart['name'] . 'の購入に失敗しました。');
-    }
+      }
+  }
+  //カート削除
+  delete_user_carts($db, $carts[0]['user_id']);
+  //購入履歴追加
+  insert_purchase_histoy($db,$carts);
+
+  //エラーが存在しなかったらコミット
+  if (has_error() === false) {
+    //コミット
+    $db->commit();
+    return true;
+  } else {
+    //ロールバック
+    $db->rollback();
+    return false;
   }
   
-  delete_user_carts($db, $carts[0]['user_id']);
 }
 
 function delete_user_carts($db, $user_id){
@@ -126,7 +145,7 @@ function delete_user_carts($db, $user_id){
       user_id = ?
   ";
 
-  execute_query($db, $sql,array($user_id));
+  return execute_query($db, $sql,array($user_id));
 }
 
 
