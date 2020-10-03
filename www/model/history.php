@@ -39,14 +39,9 @@ function get_history($db){
     FROM
       history
     WHERE
-      create_datetime = (
-        SELECT
-          MAX(create_datetime)
-        FROM
-          history
-      )
+      history_id = ?
   ";
-  return fetch_query($db, $sql);
+  return fetch_query($db, $sql,array($db->lastInsertId()));
 }
 
 function insert_details($db,$history_id,$item_id,$price,$amount){
