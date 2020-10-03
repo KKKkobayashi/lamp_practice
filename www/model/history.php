@@ -5,6 +5,7 @@ require_once MODEL_PATH . 'cart.php';
 function insert_purchase_histoy($db,$carts){
   //historyテーブルにinsert
   if(insert_history($db,$carts) === false) {
+    set_error('購入履歴の作成に失敗しました。');
     return false;
   }
   //histoyテーブル取得
@@ -18,6 +19,7 @@ function insert_purchase_histoy($db,$carts){
         $cart['price'],
         $cart['amount']
       ) === false){
+      set_error('購入履歴の詳細の作成に失敗しました。');
       return false;
     }
   }

@@ -117,20 +117,24 @@ function purchase_carts($db, $carts){
         $cart['stock'] - $cart['amount']
       ) === false){
       set_error($cart['name'] . 'の購入に失敗しました。');
-      //ロールバック
-      $db->rollback();
-      return false;
-    }
+      }
   }
-  //カート削除、購入履歴追加
-  if (delete_user_carts($db, $carts[0]['user_id']) === false
-    || insert_purchase_histoy($db,$carts) === false){
-      //ロールバック
-      $db->rollback();
-      return false;
+  //カート削除
+  delete_user_carts($db, $carts[0]['user_id']);
+  //購入履歴追加
+  insert_purchase_histoy($db,$carts);
+
+  //エラーが存在しなかったらコミット
+  if (has_error() === false) {
+    //コミット
+    $db->commit();
+    return true;
+  } else {
+    //ロールバック
+    $db->rollback();
+    return false;
   }
-  //コミット
-  $db->commit();
+  
 }
 
 function delete_user_carts($db, $user_id){
@@ -141,9 +145,7 @@ function delete_user_carts($db, $user_id){
       user_id = ?
   ";
 
-  if (execute_query($db, $sql,array($user_id)) === false){
-    return false;
-  }
+  return execute_query($db, $sql,array($user_id));
 }
 
 
