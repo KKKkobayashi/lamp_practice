@@ -15,7 +15,7 @@ $user = get_login_user($db);
 
 //adminユーザーかどうかで場合分け
 if(is_admin($user)){
-  $histories = get_admin_histories($db);
+  $histories = get_user_histories($db);
 } else {
   $histories = get_user_histories($db,$user['user_id']);
 }
