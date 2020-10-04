@@ -60,4 +60,78 @@ function insert_details($db,$history_id,$item_id,$price,$amount){
   return execute_query($db, $sql,array($history_id,$item_id,$price,$amount));
 }
 
+function get_admin_histories($db){
+  $sql = "
+  SELECT
+    history.history_id,
+    history.create_datetime,
+    sub_details.total
+  FROM
+    history
+  INNER JOIN
+    (
+      SELECT
+        history_id,
+        sum(price*amount) as total
+      FROM
+        details
+      GROUP BY 
+        history_id
+    ) as sub_details
+  ON
+    history.history_id = sub_details.history_id
+  ORDER BY
+    history.history_id
+  DESC
+  ";
+  return fetch_all_query($db, $sql);
+}
+
+function get_user_histories($db, $user_id){
+  $sql = "
+  SELECT
+    history.history_id,
+    history.create_datetime,
+    sub_details.total
+  FROM
+    history
+  INNER JOIN
+    (
+      SELECT
+        history_id,
+        sum(price*amount) as total
+      FROM
+        details
+      GROUP BY 
+        history_id
+    ) as sub_details
+  ON
+    history.history_id = sub_details.history_id
+  WHERE
+    history.user_id = ?
+  ORDER BY
+    history.history_id
+  DESC
+  ";
+  return fetch_all_query($db, $sql,array($user_id));
+}
+
+function get_details($db,$history_id){
+  $sql = "
+  SELECT
+    items.name,
+    details.price,
+    details.amount,
+   	details.price*details.amount as sub_total
+  FROM
+    details
+  INNER JOIN
+	  items
+  ON
+    details.item_id = items.item_id
+  WHERE
+    details.history_id = ?
+  ";
+  return fetch_all_query($db, $sql,array($history_id));
+}
 ?>
