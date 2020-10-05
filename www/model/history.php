@@ -109,4 +109,25 @@ function get_details($db,$history_id){
   ";
   return fetch_all_query($db, $sql,array($history_id));
 }
+function get_rankings_limit_third($db){
+  $sql = "
+  SELECT
+    items.name,
+    sum(details.amount) as sum_amount
+  FROM
+    details
+  JOIN
+	  items
+  ON
+    details.item_id = items.item_id
+  GROUP BY
+    details.item_id
+  ORDER BY
+    sum_amount
+  DESC
+  LIMIT 
+    3
+  ";
+  return fetch_all_query($db, $sql);
+}
 ?>
