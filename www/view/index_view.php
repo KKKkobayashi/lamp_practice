@@ -46,7 +46,26 @@ $token = get_csrf_token();
       <?php } ?>
       </div>
     </div>
-  </div>
-  
+      <h2>人気ランキング</h2>
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th></th>
+              <th>商品名</th>
+              <th>累積購入数</th>
+            </tr>
+          </thead>
+          <?php $num=1;?>
+          <?php foreach($rankings as $ranking){ ?>
+            <tbody>
+              <tr>
+                <th><?php print(h($num)); ?>位</th>
+                <td><?php print(h($ranking['name'])); ?></td>
+                <td><?php print(h($ranking['sum_amount'])); ?></td>
+              </tr>
+            </tbody>
+            <?php $num+=1; } ?>
+        </table>
+    </div>
 </body>
 </html>
